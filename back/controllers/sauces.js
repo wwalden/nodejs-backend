@@ -3,6 +3,13 @@ const fs = require('fs');
 
 
 exports.createElement = (req, res, next) => {
+      /*
+        delete req.body._id;
+        const sauce = new Sauce({
+            ...req.body
+        });
+*/
+        
     const sauceObject = JSON.parse(req.body.thing);
     delete sauceObject._id;
     const sauce = new Sauce({
@@ -47,8 +54,9 @@ exports.deleteElement =  (req, res, next) => {
 };
 
 
-exports.getAllElement =  (req, res, next) => {
- Sauce.find()
-        .then(sauces => res.status(200).json(sauces))
-        .catch(error => res.status(400).json({ error }));
+exports.getAllElement =  (req, res) => {
+ //Sauce.find()
+ res.json({ message: 'Votre requête (quête!) a bien été reçue !' })
+        //.then(sauces => res.status(200).json(sauces))
+        //.catch(error => res.status(400).json({ error }));
 };
