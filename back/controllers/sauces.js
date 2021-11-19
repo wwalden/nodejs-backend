@@ -1,33 +1,38 @@
-const Sauce = require('../models/sauces');
+const Sauce = require('../models/Sauce');
 const fs = require('fs');
 
 
 exports.createElement = (req, res, next) => {
-      /*
+      /* OLD PART **
         delete req.body._id;
         const sauce = new Sauce({
             ...req.body
         });
 */
-        
-    const sauceObject = JSON.parse(req.body.thing);
+
+
+    const sauceObject = JSON.parse(req.body.sauce);
     delete sauceObject._id;
     const sauce = new Sauce({
         ...sauceObject,
         imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
     });
     sauce.save()
-        .then(() => res.status(201).json({ message: 'Objet enregistré !'}))
+        .then(() => res.status(201).json({ message: 'Sauce bien enregistrée!'}))
         .catch(error => res.status(400).json({ error }));
 };
 
 
+
 exports.getOneElement =   (req, res, next) => {
  Sauce.findOne({ _id: req.params.id })
-        .then(sauce => res.status(200).json(sauce))
+ res.json({ message: 'Votre (!) a bien été reçue !' })
+        .then(sauces => res.status(200).json(sauces))
         .catch(error => res.status(404).json({ error }));
 };
 
+
+/*
 exports.modifyElement =  (req, res, next) => {
  const sauceObject = req.file ?
  {
@@ -38,8 +43,9 @@ exports.modifyElement =  (req, res, next) => {
         .then(() => res.status(200).json({ message: 'Objet modifié !'}))
         .catch(error => res.status(400).json({ error }));
 };
+*/
 
-
+/*
 exports.deleteElement =  (req, res, next) => {
         Sauce.findOne()
         .then(sauce => {
@@ -52,11 +58,11 @@ exports.deleteElement =  (req, res, next) => {
         })
         .catch(error => res.status(500).json({ error }));
 };
+*/
 
-
-exports.getAllElement =  (req, res) => {
- //Sauce.find()
- res.json({ message: 'Votre requête (quête!) a bien été reçue !' })
-        //.then(sauces => res.status(200).json(sauces))
-        //.catch(error => res.status(400).json({ error }));
+exports.getAllElement =  (req, res, next) => {
+ Sauce.find()
+ res.json({ message: 'Votre requête (!) a bien été reçue !' })
+        .then(sauces => res.status(200).json(sauces))
+        .catch(error => res.status(400).json({ error }));
 };
