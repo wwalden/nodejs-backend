@@ -26,7 +26,7 @@ exports.createElement = (req, res, next) => {
 
 exports.getOneElement =   (req, res, next) => {
  Sauce.findOne({ _id: req.params.id })
- res.json({ message: 'Votre (!) a bien été reçue !' })
+ //res.json({ message: 'Votre (!) a bien été reçue !' })
         .then(sauces => res.status(200).json(sauces))
         .catch(error => res.status(404).json({ error }));
 };
@@ -60,9 +60,10 @@ exports.deleteElement =  (req, res, next) => {
 };
 */
 
+
 exports.getAllElement =  (req, res, next) => {
  Sauce.find()
- res.json({ message: 'Votre requête (!) a bien été reçue !' })
+ //res.json({ message: 'Votre requête (!) a bien été reçue !' })
         .then(sauces => res.status(200).json(sauces))
         .catch(error => res.status(400).json({ error }));
 };
