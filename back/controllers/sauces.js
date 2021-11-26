@@ -1,11 +1,14 @@
 const Sauce = require('../models/Sauce');
-const fs = require('fs');
+//'fs: file system': nous permet de supprimer les images
+const fs = require('fs'); 
 
 
 exports.createSauce = (req, res, next) => {
     const sauceObject = JSON.parse(req.body.sauce);
+    // supprimer de la requête le champ ID créé par MongoDB
     delete sauceObject._id;
     const sauce = new Sauce({
+        // opérateur spread (...), raccourci qui évite de détailler tous les éléments de la requête
         ...sauceObject,
         imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
     });
@@ -36,13 +39,15 @@ exports.modifySauce =  (req, res, next) => {
 
 exports.deleteSauce =  (req, res, next) => {
     Sauce.findOne()
+        // Récupère le chemin d'accès de l'image et supprime celle-ci du dossier
         .then(sauce => {
             const filename = sauce.imageUrl.split('/images/')[1];
             fs.unlink(`images/${filename}`, () => {
+                // Supprime ensuite (call back) la sauce de notre base de donnée
                 Sauce.deleteOne({ _id: req.params.id })
                     .then(() => res.status(200).json({ message: 'Sauce supprimée!'}))
                     .catch(error => res.status(400).json({ error }));
-            })
+            });
         })
         .catch(error => res.status(500).json({ error }));
 };
@@ -57,7 +62,9 @@ exports.getAllSauce =  (req, res, next) => {
 
 exports.likeSauce =   (req, res, next) => {
     switch (req.body.like) {
+        // Le front renvoie 1: like utilisateur
         case 1:
+            // On récupère l'ID de la sauce, et l'on ajoute un like ainsi que la userID
             Sauce.updateOne({ _id: req.params.id },
                 { $inc: { likes: req.body.like++ },
                 $push: { usersLiked: req.body.userId }
@@ -74,8 +81,10 @@ exports.likeSauce =   (req, res, next) => {
                 .catch(error => res.status(400).json({ error }))
             break;
         case 0:
+            // Un like ou dislioke a été décliqué
             Sauce.findOne({ _id: req.params.id })
                 .then(sauce => {
+                    // On cherche à savoir si c'était un like, puis mis à jour
                     if (sauce.usersLiked.includes(req.body.userId)) {
                         Sauce.updateOne({ _id: req.params.id },
                             { $pull: { usersLiked: req.body.userId },

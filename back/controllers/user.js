@@ -1,8 +1,9 @@
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcrypt'); // Package de chiffrement, pour hasher les mots de passe
 const User = require('../models/User');
-const jwt = require('jsonwebtoken');
+const jwt = require('jsonwebtoken'); // Package 'Json Web Token', permet de générer des Token cryptés
 
 exports.signup = (req, res, next) =>  {
+    // fonction de hashage. le mdp est ici salé 10 fois
     bcrypt.hash(req.body.password, 10)
     .then(hash => {
         const user = new User({
@@ -22,6 +23,7 @@ exports.login = (req, res, next) => {
         if (!user) {
           return res.status(401).json({ error: `L'utilisateur n'existe pas` });
         }
+        // fonction bcrypt de comparaison des mots de passe (entré vs valable)
         bcrypt.compare(req.body.password, user.password)
           .then(valid => {
             if (!valid) {
@@ -29,6 +31,7 @@ exports.login = (req, res, next) => {
             }
             res.status(200).json({
               userId: user._id,
+              // Token: permet de vérifier que les requêtes sont authentifiées --> package jwt
               token: jwt.sign(
                 { userId: user._id },
                 `${process.env.A79835B22B72F2}`,
