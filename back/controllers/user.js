@@ -34,7 +34,7 @@ exports.login = (req, res, next) => {
               // Token: permet de vérifier que les requêtes sont authentifiées --> package jwt
               token: jwt.sign(
                 { userId: user._id },
-                `${process.env.A79835B22B72F2}`,
+                `${process.env.TOKEN_KEY}`,
                 { expiresIn: '12h' }
               )
             });

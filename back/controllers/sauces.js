@@ -4,12 +4,14 @@ const fs = require('fs');
 
 
 exports.createSauce = (req, res, next) => {
+    // On récupère l'objet contenant les informations de la sauce
     const sauceObject = JSON.parse(req.body.sauce);
     // supprimer de la requête le champ ID créé par MongoDB
     delete sauceObject._id;
     const sauce = new Sauce({
         // opérateur spread (...), raccourci qui évite de détailler tous les éléments de la requête
         ...sauceObject,
+        // ajout de l'URL de l'image
         imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
     });
     sauce.save()
@@ -18,18 +20,21 @@ exports.createSauce = (req, res, next) => {
 };
 
 
-exports.getOneSauce =   (req, res, next) => {
+exports.getOneSauce = (req, res, next) => {
     Sauce.findOne({ _id: req.params.id })
         .then(sauces => res.status(200).json(sauces))
         .catch(error => res.status(404).json({ error }));
 };
 
 
-exports.modifySauce =  (req, res, next) => {
+exports.modifySauce = (req, res, next) => {
+    // Y-a-t-il un New file dans la requête? 
     const sauceObject = req.file ?
+    // New file existe
     {
          ...sauceObject,
          imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
+    // New file n'existe pas
     } : { ...req.body };
     Sauce.updateOne({ _id: req.params.id }, { ...sauceObject, _id: req.params.id })
         .then(() => res.status(200).json({ message: 'La sauce a bien été modifiée'}))
@@ -38,7 +43,7 @@ exports.modifySauce =  (req, res, next) => {
 
 
 exports.deleteSauce =  (req, res, next) => {
-    Sauce.findOne()
+    Sauce.findOne({ _id: req.params.id })
         // Récupère le chemin d'accès de l'image et supprime celle-ci du dossier
         .then(sauce => {
             const filename = sauce.imageUrl.split('/images/')[1];
@@ -53,14 +58,14 @@ exports.deleteSauce =  (req, res, next) => {
 };
 
 
-exports.getAllSauce =  (req, res, next) => {
+exports.getAllSauce = (req, res, next) => {
     Sauce.find()
         .then(sauces => res.status(200).json(sauces))
         .catch(error => res.status(400).json({ error }));
 };
 
 
-exports.likeSauce =   (req, res, next) => {
+exports.likeSauce = (req, res, next) => {
     switch (req.body.like) {
         // Le front renvoie 1: like utilisateur
         case 1:
@@ -81,7 +86,7 @@ exports.likeSauce =   (req, res, next) => {
                 .catch(error => res.status(400).json({ error }))
             break;
         case 0:
-            // Un like ou dislioke a été décliqué
+            // Un like ou dislike a été décliqué
             Sauce.findOne({ _id: req.params.id })
                 .then(sauce => {
                     // On cherche à savoir si c'était un like, puis mis à jour
