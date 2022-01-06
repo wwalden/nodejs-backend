@@ -71,6 +71,7 @@ exports.likeSauce = (req, res, next) => {
         case 1:
             // On récupère l'ID de la sauce, et l'on ajoute un like ainsi que la userID
             Sauce.updateOne({ _id: req.params.id },
+                // Opérateurs MogoDB de modification des Array
                 { $inc: { likes: req.body.like++ },
                 $push: { usersLiked: req.body.userId }
                 })
