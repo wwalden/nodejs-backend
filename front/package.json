@@ -11,11 +11,18 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "ansi-regex": "^6.0.1",
     "concurrently": "^5.2.0",
+    "ecstatic": "^4.1.4",
+    "glob-parent": "^6.0.2",
     "http-server": "^0.11.1",
     "live-server": "^1.2.1",
+    "minimist": "^1.2.5",
     "node": "^14.0.0",
+    "node-fetch": "^3.2.0",
     "node-sass": "^4.14.1",
-    "run-script-os": "^1.0.7"
+    "run-script-os": "^1.0.7",
+    "tar": "^6.1.11",
+    "trim-newlines": "^4.0.2"
   }
 }
